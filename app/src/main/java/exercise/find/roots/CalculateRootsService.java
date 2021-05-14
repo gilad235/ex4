@@ -18,8 +18,49 @@ public class CalculateRootsService extends IntentService {
     long numberToCalculateRootsFor = intent.getLongExtra("number_for_service", 0);
     if (numberToCalculateRootsFor <= 0) {
       Log.e("CalculateRootsService", "can't calculate roots for non-positive input" + numberToCalculateRootsFor);
-      return;
+
     }
+    long i=1;
+    int maxx = (int) Math.sqrt(numberToCalculateRootsFor);
+    while (timeStartMs+20000>System.currentTimeMillis())
+    {
+      i++;
+      if (numberToCalculateRootsFor%i==0)
+      {
+        long b=  (numberToCalculateRootsFor/i);
+//        intent1.setAction("found_roots");
+        Intent intent1 = new Intent("found_roots");
+        intent.setAction("found_roots");
+        intent1.putExtra("original_number",numberToCalculateRootsFor);
+        intent1.putExtra("root1",i);
+        intent1.putExtra("root2",b);
+        double time = ((System.currentTimeMillis()-timeStartMs)/1000.0);
+        String strtime = Double.toString(time);
+        intent1.putExtra("time", strtime);
+        sendBroadcast(intent1);
+        return;
+      }
+      if (i>maxx)//prime
+      {
+        Intent intent1 = new Intent("found_roots");
+
+//        intent1.setAction("found_roots");
+        intent1.putExtra("original_number",numberToCalculateRootsFor);
+        intent1.putExtra("root1",numberToCalculateRootsFor);
+        intent1.putExtra("root2",1);
+        double time = ((System.currentTimeMillis()-timeStartMs)/1000.0);
+        String strtime = Double.toString(time);
+        intent1.putExtra("time", (strtime));
+        sendBroadcast(intent1);
+        return;
+      }
+    }
+//    intent1.setAction("stopped_calculations");
+    Intent intent1 = new Intent("stopped_calculations");
+    intent1.putExtra("original_number",numberToCalculateRootsFor);
+    intent1.putExtra("time_until_give_up_seconds",20000);
+    sendBroadcast(intent1);
+    return;
     /*
     TODO:
      calculate the roots.
